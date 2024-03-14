@@ -1,35 +1,21 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:18-alpine'
-        }
-    }
-
-    environment {
-        CI = 'true'
-    }
+    agent any
 
     stages {
-        stage('Install') {
-            steps {
-                sh 'npm install'
-            }
-        }
         stage('Build') {
             steps {
-                sh 'npm run build'
+                sh 'docker build -t my-react-app .'
             }
         }
         stage('Test') {
             steps {
-                sh 'npm run test'
+                sh 'docker run my-react-app npm test'
             }
         }
         stage('Deploy') {
             steps {
-                echo 'Deploying....'
+                // Add deployment steps here
             }
         }
     }
-
 }
