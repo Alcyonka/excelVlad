@@ -11,14 +11,21 @@ pipeline {
                 sh 'npm install'
             }
         }
-        stage('Build') {
-            steps {
-                sh 'npm run build'
-            }
-        }
         stage('Test') {
             steps {
                 sh 'npm run test'
+            }
+        }
+        stage('Build Image') {
+            steps {
+                sh 'docker build -t excel-clone .'
+                sh 'docker tag excel-clone:latest vladik25/excel-clone:latest'
+            }
+        }
+        stage('Docker Login') {
+            steps {
+                sh 'docker login --username=vladik25 --password="V@s_C56ry9QR(rJ"'
+                sh 'docker push vladik25/excel-clone:latest'
             }
         }
         stage('Deploy') {
