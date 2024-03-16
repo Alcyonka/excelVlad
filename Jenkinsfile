@@ -5,20 +5,29 @@ pipeline {
         }
     }
 
+    tools {
+        nodejs 'nodejs'
+    }
+
     stages {
+        stage('Install') {
+            steps {
+                sh 'npm install'
+            }
+        }
         stage('Build') {
             steps {
-                sh 'ls -la'
+                sh 'npm run build'
             }
         }
         stage('Test') {
             steps {
-                sh 'npm -v'
+                sh 'npm run test'
             }
         }
         stage('Deploy') {
             steps {
-                // Add deployment steps here
+                // Add your deployment steps here
                 sh 'echo "deploying.."'
             }
         }
