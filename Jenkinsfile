@@ -5,10 +5,6 @@ pipeline {
         }
     }
 
-    tools {
-        nodejs 'nodejs'
-    }
-
     stages {
         stage('Install') {
             steps {
