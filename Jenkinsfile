@@ -1,21 +1,25 @@
 pipeline {
-    agent any
+    agent {
+        node {
+            label 'docker-agent-nodejs'
+        }
+    }
 
     stages {
         stage('Build') {
             steps {
-                sh 'docker build -t my-react-app .'
+                sh 'node -v'
             }
         }
         stage('Test') {
             steps {
-                sh 'docker run my-react-app npm test'
+                sh 'npm -v'
             }
         }
         stage('Deploy') {
             steps {
                 // Add deployment steps here
-                echo 'deploying..'
+                sh 'echo "deploying.."'
             }
         }
     }
