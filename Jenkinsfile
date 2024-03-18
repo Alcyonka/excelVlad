@@ -6,6 +6,11 @@ pipeline {
     }
 
     stages {
+        stage('check docker version') {
+            steps {
+                sh 'docker -v'
+            }
+        }
         stage('Install') {
             steps {
                 sh 'npm install'
