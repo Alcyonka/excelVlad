@@ -35,7 +35,57 @@ function Toolbar() {
     };
   };
 
+  let posButton1 = document.createElement('span');
+  posButton1.classList.add(
+    'ql-formats'
+   );
+   posButton1.setAttribute('id', 'butLoad');
+let customButton1 = document.createElement('input');
+customButton1.type="file"
+customButton1.id="customButton1"
+
+customButton1.innerHTML = 'Загрузить';
+customButton1.style.width='110px';
+customButton1.addEventListener('change', (event) => {
+  const file = (event.target as HTMLInputElement).files![0];
+  if (!file) {
+      console.log('Выбор файла отменён. Или что-то другое произошло?');
+    }
+    else{
+      console.log(file.name);
+      console.time();
+      let reader = new FileReader();
+      reader.onloadend = function(event) {
+        let arrayBuffer = reader.result;
+        // debugger
+        let arrayOfStrings = file.name.split(".");
+        let fileExtention = arrayOfStrings[arrayOfStrings.length - 1]
+        console.log(fileExtention);
+
+if (fileExtention=="xlsx" || fileExtention=="xls"){
+          var XLSX = require("xlsx");
+  
+              var options = { type: 'array' };
+      var workbook = XLSX.read(arrayBuffer, options);
+      console.timeEnd();
+  
+      var sheetName = workbook.SheetNames
+      var sheet = workbook.Sheets[sheetName]
+          console.log(XLSX.utils.sheet_to_html(sheet))
+      }
+        console.timeEnd();
+      };
+  
+      reader.readAsArrayBuffer(file);
+  }
+    });
+
+    posButton1.appendChild(customButton1);
+    const panel = document.getElementById("FileOpen");
+    panel?.appendChild(posButton1);
+
   return (
+    <>
     <div className="[&>*]:ml-3 [&>*]:p-1 [&>*]:cursor-pointer [&>*]:rounded hover:[&>*]:bg-slate-200">
       <FontAwesomeIcon
         data-testid="bold"
@@ -56,6 +106,8 @@ function Toolbar() {
         icon={faUnderline}
       />
     </div>
+    <div id="FileOpen"></div>
+    </>
   );
 }
 
