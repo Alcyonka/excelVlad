@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBold, faItalic, faUnderline } from '@fortawesome/free-solid-svg-icons';
+import { faBold, faItalic, faUnderline, faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { setCurrentStyle, setStyle } from '../store/features/cellSlice';
+import Dropdown from "./Dropdown";
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 function Toolbar() {
   const { currentCell, currentStyle } = useAppSelector((state) => state.cellReducer);
@@ -13,16 +15,20 @@ function Toolbar() {
     fontWeight: false,
     fontStyle: false,
     textDecoration: false,
+    fontSize: false,
   });
 
   const clickHandler = (style: string, value: string) => {
+    console.log(style + value);
     return () => {
+      console.log(style + value);
       const updateStyle = (style: any, value: any) => {
         const updatedStyle = { ...currentStyle, [style]: value };
         dispatch(setCurrentStyle({ style: updatedStyle }));
-
+console.log(style + value);
         const targetCell = group.length ? group : [currentCell];
         targetCell.forEach((cell) => {
+          console.log(style + value);
           dispatch(setStyle({ styleObj: { cell, style, value } }));
         });
       };
@@ -35,54 +41,17 @@ function Toolbar() {
     };
   };
 
-  let posButton1 = document.createElement('span');
-  posButton1.classList.add(
-    'ql-formats'
-   );
-   posButton1.setAttribute('id', 'butLoad');
-let customButton1 = document.createElement('input');
-customButton1.type="file"
-customButton1.id="customButton1"
+ 
+const SIZE_LIST:string[] = ['24px', '20px', '16px', '12px', '8px'];
 
-customButton1.innerHTML = 'Загрузить';
-customButton1.style.width='110px';
-customButton1.addEventListener('change', (event) => {
-  const file = (event.target as HTMLInputElement).files![0];
-  if (!file) {
-      console.log('Выбор файла отменён. Или что-то другое произошло?');
-    }
-    else{
-      console.log(file.name);
-      console.time();
-      let reader = new FileReader();
-      reader.onloadend = function(event) {
-        let arrayBuffer = reader.result;
-        // debugger
-        let arrayOfStrings = file.name.split(".");
-        let fileExtention = arrayOfStrings[arrayOfStrings.length - 1]
-        console.log(fileExtention);
+const [size, setSize] = useState('');
 
-if (fileExtention=="xlsx" || fileExtention=="xls"){
-          var XLSX = require("xlsx");
-  
-              var options = { type: 'array' };
-      var workbook = XLSX.read(arrayBuffer, options);
-      console.timeEnd();
-  
-      var sheetName = workbook.SheetNames
-      var sheet = workbook.Sheets[sheetName]
-          console.log(XLSX.utils.sheet_to_html(sheet))
-      }
-        console.timeEnd();
-      };
-  
-      reader.readAsArrayBuffer(file);
-  }
-    });
-
-    posButton1.appendChild(customButton1);
-    const panel = document.getElementById("FileOpen");
-    panel?.appendChild(posButton1);
+ const handleSize:any = (value: any) => {
+    setSize(value);
+    //console.log("11")
+    //clickHandler('fontSize', value);
+    return value;
+  };
 
   return (
     <>
@@ -91,22 +60,28 @@ if (fileExtention=="xlsx" || fileExtention=="xls"){
         data-testid="bold"
         style={currentStyle?.fontWeight ? { backgroundColor: 'gray' } : {}}
         onClick={clickHandler('fontWeight', 'bold')}
-        icon={faBold}
+        icon={faBold as IconProp}
       />
       <FontAwesomeIcon
         data-testid="italic"
         style={currentStyle?.fontStyle ? { backgroundColor: 'gray' } : {}}
         onClick={clickHandler('fontStyle', 'italic')}
-        icon={faItalic}
+        icon={faItalic as IconProp}
       />
       <FontAwesomeIcon
         data-testid="underline"
         style={currentStyle?.textDecoration ? { backgroundColor: 'gray' } : {}}
         onClick={clickHandler('textDecoration', 'underline')}
-        icon={faUnderline}
+        icon={faUnderline as IconProp}
       />
     </div>
-    <div id="FileOpen"></div>
+    <div className='dropdown-container size-menu'>
+        <Dropdown 
+          listItems={SIZE_LIST}
+          selectedValue={size}
+          onClick={handleSize}
+        />
+      </div>
     </>
   );
 }
